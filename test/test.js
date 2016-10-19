@@ -120,4 +120,48 @@ describe('lei-coroutine', function () {
     }
   });
 
+  it('parallel', function () {
+    const test1 = coroutine.wrap(function* (a, b) {
+      yield coroutine.delay(a);
+      yield coroutine.delay(b);
+      return [ a, b ];
+    });
+    const test2 = coroutine.wrap(function* (a, b) {
+      yield coroutine.delay(a);
+      yield coroutine.delay(b);
+      return [ b, a ];
+    });
+    return coroutine(function* (a, b, c, d) {
+      return yield coroutine.parallel(
+        test1(a, b),
+        test2(c, d)
+      );
+    }, 1, 2, 3, 4).then(ret => {
+      assert.deepEqual(ret, [[ 1, 2 ], [ 4, 3 ]]);
+    });
+  });
+
+  it('parallel - error', function () {
+    const test1 = coroutine.wrap(function* (a, b) {
+      yield coroutine.delay(a);
+      yield coroutine.delay(b);
+      throw new Error('test1');
+    });
+    const test2 = coroutine.wrap(function* (a, b) {
+      yield coroutine.delay(a);
+      yield coroutine.delay(b);
+      throw new Error('test2');
+    });
+    return coroutine(function* (a, b, c, d) {
+      return yield coroutine.parallel(
+        test1(a, b),
+        test2(c, d)
+      );
+    }, 1, 2, 3, 4).then(ret => {
+      throw new Error('must throws error');
+    }).catch(err => {
+      assert.equal(err.message, 'test1');
+    });
+  });
+
 });

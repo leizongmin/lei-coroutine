@@ -24,6 +24,14 @@ fn(100).then(ret => console.log(ret)).catch(err => console.error(err));
 coroutine(function* (a) {
   yield coroutine.delay(a);
 }, 100).then(ret => console.log(ret)).catch(err => console.error(err));
+
+// parallel
+coroutine(function* (a, b) {
+  yield coroutine.parallel(
+    coroutine.delay(a),
+    coroutine.delay(b)
+  );
+}, 100, 120).then(ret => console.log(ret)).catch(err => console.error(err));
 ```
 
 ## License

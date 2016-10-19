@@ -77,7 +77,32 @@ function delay(ms) {
   });
 }
 
+/**
+ * 并行执行多个Promise任务
+ *
+ * @param {Promise} a
+ * @param {Promise} b
+ */
+function parallel() {
+  return new Promise((resolve, reject) => {
+    const result = [];
+    let finishCount = 0;
+    Array.prototype.slice.call(arguments).forEach((p, i) => {
+      p.then(ret => {
+        result[i] = ret;
+        finishCount += 1;
+        if (finishCount >= arguments.length) {
+          resolve(result);
+        } 
+      }).catch(err => {
+        return reject(err);
+      });
+    });
+  });
+}
+
 module.exports = exports = exec;
 exports.exec = exec;
 exports.wrap = wrap;
 exports.delay = delay;
+exports.parallel = parallel;

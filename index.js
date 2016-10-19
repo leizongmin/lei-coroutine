@@ -2,7 +2,7 @@
 
 /**
  * lei-coroutine
- * 
+ *
  * @author Zongmin Lei <leizongmin@gmail.com>
  */
 
@@ -47,13 +47,16 @@ function wrap(genFn) {
   // 保留函数名和参数信息
   const info = genFn.toString().match(/function\s*\*\s*(.*\(.*\))/);
   const sign = info && info[1] ? info[1] : '()';
-  const code = `(function ${ sign } { return fn.apply(this, arguments); })`;
+  const code =
+`(function ${ sign } {
+  return fn.apply(this, arguments);
+})`;
   return eval(code);
 }
 
 /**
  * 执行coroutine函数
- * 
+ *
  * @param {Function} genFn
  * @param {Mixed} param1
  * @param {Mixed} param2
@@ -63,6 +66,18 @@ function exec(genFn) {
   return wrap(genFn).apply(this, Array.prototype.slice.call(arguments, 1));
 }
 
+/**
+ * 暂停
+ *
+ * @param {Number} ms
+ */
+function delay(ms) {
+  return new Promise((resolve, reject) => {
+    setTimeout(resolve, ms, ms);
+  });
+}
+
 module.exports = exports = exec;
 exports.exec = exec;
 exports.wrap = wrap;
+exports.delay = delay;

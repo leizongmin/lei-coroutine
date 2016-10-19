@@ -1,7 +1,7 @@
 {
   "name": "lei-coroutine",
   "version": "1.0.0",
-  "description": "coroutine",
+  "description": "Simple coroutine library",
   "main": "index.js",
   "files": [
     "index.js"

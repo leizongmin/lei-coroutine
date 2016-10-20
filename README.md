@@ -68,12 +68,12 @@ fn(100).then(ret => console.log(ret)).catch(err => console.error(err));
 
 // 直接执行
 (async function (a) {
-  yield coroutine.delay(a);
+  await coroutine.delay(a);
 })(100).then(ret => console.log(ret)).catch(err => console.error(err));
 
 // 并行执行多个任务的例子
 (async function (a, b) {
-  yield coroutine.parallel([
+  await coroutine.parallel([
     coroutine.delay(a),
     coroutine.delay(b),
   ]);

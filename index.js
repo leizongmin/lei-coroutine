@@ -7,7 +7,7 @@
  */
 
 /**
- * 检查是否为Promise对象
+ * 检查是否为 Promise 对象
  *
  * @param {Object} p
  * @return {Boolean}
@@ -16,15 +16,21 @@ function isPromise(p) {
   return typeof p.then === 'function' && typeof p.catch === 'function';
 }
 
-function wrapGen(genFn) {
+/**
+ * 将 generator 函数转化为执行后返回 Promise 的函数
+ *
+ * @param {Function} genFn
+ * @return {Function}
+ */
+function genFnToPromise(genFn) {
   return function () {
     return new Promise((resolve, reject) => {
       const gen = genFn.apply(null, arguments);
       function next(value) {
         const ret = gen.next(value);
-        // 如果done=true则表示结束
+        // 如果 done=true 则表示结束
         if (ret.done) return resolve(ret.value);
-        // 如果是promise则执行
+        // 如果是 promise 则执行
         if (isPromise(ret.value)) return ret.value.then(next).catch(reject);
         // 其他值则报错
         return reject(new TypeError(`you can only yield promise but got type ${ typeof ret.value }`));
@@ -36,14 +42,14 @@ function wrapGen(genFn) {
 }
 
 /**
- * coroutine包装函数
+ * coroutine 包装函数
  *
  * @param {Function} genFn
  * @return {Function}
  */
 function wrap(genFn) {
-  // 包装generator函数
-  const fn = wrapGen(genFn);
+  // 包装 generator 函数
+  const fn = genFnToPromise(genFn);
   // 保留函数名和参数信息
   const info = genFn.toString().match(/function\s*\*\s*(.*\(.*\))/);
   const sign = info && info[1] ? info[1] : '()';
@@ -55,7 +61,7 @@ function wrap(genFn) {
 }
 
 /**
- * 执行coroutine函数
+ * 执行 coroutine 函数
  *
  * @param {Function} genFn
  * @param {Mixed} param1
@@ -78,22 +84,21 @@ function delay(ms) {
 }
 
 /**
- * 并行执行多个Promise任务
+ * 并行执行多个 Promise 任务
  *
- * @param {Promise} a
- * @param {Promise} b
+ * @param {Array} list
  */
-function parallel() {
+function parallel(list) {
   return new Promise((resolve, reject) => {
     const result = [];
     let finishCount = 0;
-    Array.prototype.slice.call(arguments).forEach((p, i) => {
+    list.forEach((p, i) => {
       p.then(ret => {
         result[i] = ret;
         finishCount += 1;
-        if (finishCount >= arguments.length) {
+        if (finishCount >= list.length) {
           resolve(result);
-        } 
+        }
       }).catch(err => {
         return reject(err);
       });

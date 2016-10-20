@@ -132,10 +132,10 @@ describe('lei-coroutine', function () {
       return [ b, a ];
     });
     return coroutine(function* (a, b, c, d) {
-      return yield coroutine.parallel(
+      return yield coroutine.parallel([
         test1(a, b),
-        test2(c, d)
-      );
+        test2(c, d),
+      ]);
     }, 1, 2, 3, 4).then(ret => {
       assert.deepEqual(ret, [[ 1, 2 ], [ 4, 3 ]]);
     });
@@ -153,10 +153,10 @@ describe('lei-coroutine', function () {
       throw new Error('test2');
     });
     return coroutine(function* (a, b, c, d) {
-      return yield coroutine.parallel(
+      return yield coroutine.parallel([
         test1(a, b),
-        test2(c, d)
-      );
+        test2(c, d),
+      ]);
     }, 1, 2, 3, 4).then(ret => {
       throw new Error('must throws error');
     }).catch(err => {

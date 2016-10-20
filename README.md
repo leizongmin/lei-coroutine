@@ -1,38 +1,85 @@
 # lei-coroutine
-Simple coroutine library
+简单的 coroutine 库
 
-## Installation
+## 为什么要造这个轮子
+
+实际上已经有两个大家所熟知的库实现了类似的功能：`co`和`bluebird`。
+相比而言，这两个库的功能更强大，而且都久经考验。
+但是我觉得它们也有各自的不足，以下是我造此轮子的理由：
+
++ `async function / await`是未来的主流，尽管现在的主流 JavaScript 引擎还没有支持。
+  但是我们要统一异步函数的格式：全部返回`Promise`。
++ `co`支持的功能太过强大，可以`yield`的类型实在太多，
+  而有时候我们只想要一个可以简单替换`async function / await`语法的方式。
+  过多的功能会让人忍不住去使用，而未来替换的时候就更麻烦。
++ 此轮子实际上更多参考自`bluebird`的`coroutine`函数。
+  但是无论是`bluebird`还是`co`，在生成的包装函数中，**都没有保留原函数的名字和参数列表等信息**，
+  在调试的时候会造成一些困难。
+
+
+## 安装
 
 ```bash
 $ npm install lei-coroutine --save
 ```
 
-## Usage
+
+## 使用方法
 
 ```javascript
 'use strict';
 
 const coroutine = require('lei-routine');
 
-// wrap
+// 包装 generator 函数
 const fn = coroutine.wrap(function* (a) {
+  // coroutine.delay() 是内置的一个等待函数，效果类似于 setTimeout
   yield coroutine.delay(a);
 });
 fn(100).then(ret => console.log(ret)).catch(err => console.error(err));
 
-// exec
+// 直接执行 generator 函数
 coroutine(function* (a) {
   yield coroutine.delay(a);
 }, 100).then(ret => console.log(ret)).catch(err => console.error(err));
 
-// parallel
+// 并行执行多个任务的例子
 coroutine(function* (a, b) {
-  yield coroutine.parallel(
+  yield coroutine.parallel([
     coroutine.delay(a),
-    coroutine.delay(b)
-  );
+    coroutine.delay(b),
+  ]);
 }, 100, 120).then(ret => console.log(ret)).catch(err => console.error(err));
 ```
+
+## 与 async function / await 的替换
+
+```javascript
+'use strict';
+
+const coroutine = require('lei-routine');
+
+// 声明函数
+async function fn(a) {
+  // coroutine.delay() 是内置的一个等待函数，效果类似于 setTimeout
+  await coroutine.delay(a);
+}
+fn(100).then(ret => console.log(ret)).catch(err => console.error(err));
+
+// 直接执行
+(async function (a) {
+  yield coroutine.delay(a);
+})(100).then(ret => console.log(ret)).catch(err => console.error(err));
+
+// 并行执行多个任务的例子
+(async function (a, b) {
+  yield coroutine.parallel([
+    coroutine.delay(a),
+    coroutine.delay(b),
+  ]);
+})(100, 120).then(ret => console.log(ret)).catch(err => console.error(err));
+```
+
 
 ## License
 

@@ -120,6 +120,30 @@ describe('lei-coroutine', function () {
     }
   });
 
+  it('wrap - __generatorFunction__', function () {
+    function* hello(world) {
+      yield world;
+      return `hello, ${ world }`;
+    }
+    const fn = coroutine.wrap(hello);
+    console.log(fn);
+    assert.equal(fn.__generatorFunction__, hello);
+  });
+
+  it('wrap - __sourceLocation__', function () {
+    const fn = coroutine.wrap(function* hello(world) {
+      yield world;
+      return `hello, ${ world }`;
+    });
+    console.log(fn);
+    assert.deepEqual(fn.__sourceLocation__, {
+      file: __filename,
+      line: 134,
+      column: 26,
+      info: `${ __filename }:134:26`,
+    });
+  });
+
   it('parallel', function () {
     const test1 = coroutine.wrap(function* (a, b) {
       yield coroutine.delay(a);

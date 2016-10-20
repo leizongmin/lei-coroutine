@@ -17,6 +17,24 @@ function isPromise(p) {
 }
 
 /**
+ * 获取源文件的位置信息
+ *
+ * @param {Number} offset
+ * @return {Object}
+ */
+function getSourceLocation(offset) {
+  const lines = new Error().stack.split(/\n/);
+  const line = lines[offset] || '';
+  const ret = line.match(/\(((.*):(\d+)?:(\d+)?)\)$/);
+  return {
+    file: ret[2],
+    line: Number(ret[3] || 0),
+    column: Number(ret[4] || 0),
+    info: ret[1],
+  };
+}
+
+/**
  * 将 generator 函数转化为执行后返回 Promise 的函数
  *
  * @param {Function} genFn
@@ -57,7 +75,10 @@ function wrap(genFn) {
 `(function ${ sign } {
   return fn.apply(this, arguments);
 })`;
-  return eval(code);
+  const ret = eval(code);
+  ret.__generatorFunction__ = genFn;
+  ret.__sourceLocation__ = getSourceLocation(3);
+  return ret;
 }
 
 /**

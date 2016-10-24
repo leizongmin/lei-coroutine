@@ -67,17 +67,23 @@ function genFnToPromise(genFn) {
   return function () {
     return new Promise((resolve, reject) => {
       const gen = genFn.apply(null, arguments);
-      function next(value) {
-        const ret = gen.next(value);
-        // 如果 done=true 则表示结束
-        if (ret.done) return resolve(ret.value);
-        // 如果是 promise 则执行
-        if (isPromise(ret.value)) return ret.value.then(next).catch(reject);
-        // 其他值则报错
-        return reject(new TypeError(`you can only yield promise but got type ${ typeof ret.value }`));
+      function step(key, value) {
+        let ret;
+        try {
+          ret = gen[key](value);
+        } catch (err) {
+          reject(err);
+          return;
+        }
+        if (ret.done) {
+          resolve(ret.value);
+        } else {
+          return Promise.resolve(ret.value)
+                  .then(v => step('next', v))
+                  .catch(err => step('throw', err));
+        }
       }
-      // 开始执行
-      next();
+      return step('next');
     });
   };
 }

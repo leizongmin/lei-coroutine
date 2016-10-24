@@ -11,6 +11,30 @@ const coroutine = require('../');
 
 describe('lei-coroutine', function () {
 
+  it('wrap - __generatorFunction__', function () {
+    function* hello(world) {
+      yield world;
+      return `hello, ${ world }`;
+    }
+    const fn = coroutine.wrap(hello);
+    console.log(fn);
+    assert.equal(fn.__generatorFunction__, hello);
+  });
+
+  it('wrap - __sourceLocation__', function () {
+    const fn = coroutine.wrap(function* hello(world) {
+      yield world;
+      return `hello, ${ world }`;
+    });
+    console.log(fn);
+    assert.deepEqual(fn.__sourceLocation__, {
+      file: __filename,
+      line: 25,
+      column: 26,
+      info: `${ __filename }:25:26`,
+    });
+  });
+
   it('wrap', function () {
     const fn = coroutine.wrap(function* () {
       yield coroutine.delay(122);
@@ -56,16 +80,53 @@ describe('lei-coroutine', function () {
     });
   });
 
-  it('exec - cannot yield not a promise', function () {
+  it('exec - try catch error', function () {
     return coroutine(function* () {
-      yield coroutine.delay(111);
-      yield coroutine.delay(110);
-      yield 12345;
+      try {
+        yield coroutine.delay(111);
+        yield coroutine.delay(110);
+        throw new Error('test');
+      } catch (err) {
+        assert.equal(err.message, 'test');
+        throw new Error('test2');
+      }
     }).then(ret => {
       throw new Error('must throws error');
     }).catch(err => {
       console.log(err);
-      assert.equal(err.message, 'you can only yield promise but got type number');
+      assert.equal(err.message, 'test2');
+    });
+  });
+
+  it('exec - try catch error from yield', function () {
+    const throwsError = coroutine.wrap(function* throwsError(msg) {
+      yield coroutine.delay(10);
+      throw new Error(msg);
+    });
+    return coroutine(function* () {
+      try {
+        yield throwsError('test3');
+        throw new Error('test');
+      } catch (err) {
+        assert.equal(err.message, 'test3');
+        throw new Error('test2');
+      }
+    }).then(ret => {
+      throw new Error('must throws error');
+    }).catch(err => {
+      console.log(err);
+      assert.equal(err.message, 'test2');
+    });
+  });
+
+  it('exec - can yield not a promise', function () {
+    return coroutine(function* () {
+      yield coroutine.delay(111);
+      yield coroutine.delay(110);
+      return yield 12345;
+    }).then(ret => {
+      console.log(ret);
+      assert.equal(ret, 12345);
     });
   });
 
@@ -118,30 +179,6 @@ describe('lei-coroutine', function () {
       assert.equal(fn.length, 3);
       assert.equal(firstLine(fn.toString()), 'function haha(a, b, c) {');
     }
-  });
-
-  it('wrap - __generatorFunction__', function () {
-    function* hello(world) {
-      yield world;
-      return `hello, ${ world }`;
-    }
-    const fn = coroutine.wrap(hello);
-    console.log(fn);
-    assert.equal(fn.__generatorFunction__, hello);
-  });
-
-  it('wrap - __sourceLocation__', function () {
-    const fn = coroutine.wrap(function* hello(world) {
-      yield world;
-      return `hello, ${ world }`;
-    });
-    console.log(fn);
-    assert.deepEqual(fn.__sourceLocation__, {
-      file: __filename,
-      line: 134,
-      column: 26,
-      info: `${ __filename }:134:26`,
-    });
   });
 
   it('parallel', function () {

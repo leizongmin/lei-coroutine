@@ -1,6 +1,6 @@
 {
   "name": "lei-coroutine",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Simple coroutine library, can keep function name and parameters information",
   "main": "index.js",
   "files": [

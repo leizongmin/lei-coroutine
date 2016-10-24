@@ -25,12 +25,22 @@ function isPromise(p) {
 function getSourceLocation(offset) {
   const lines = new Error().stack.split(/\n/);
   const line = lines[offset] || '';
-  const ret = line.match(/\(((.*):(\d+)?:(\d+)?)\)$/);
+  const ret = line.match(/at (.*):(\d+):(\d+)/);
+  if (!ret) {
+    return { file: '', line: 0, column: 0, info: '' };
+  }
+  let file = ret[1];
+  const ret2 = file.match(/\((.*)/);
+  if (ret2) {
+    file = ret2[1];
+  }
+  const lineNum = Number(ret[2] || 0);
+  const column = Number(ret[3] || 0);
   return {
-    file: ret[2],
-    line: Number(ret[3] || 0),
-    column: Number(ret[4] || 0),
-    info: ret[1],
+    file,
+    line: lineNum,
+    column,
+    info: `${ file }:${ lineNum }:${ column }`,
   };
 }
 

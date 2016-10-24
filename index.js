@@ -107,6 +107,7 @@ function exec(genFn) {
  * 暂停
  *
  * @param {Number} ms
+ * @return {Promise}
  */
 function delay(ms) {
   return new Promise((resolve, reject) => {
@@ -118,6 +119,7 @@ function delay(ms) {
  * 并行执行多个 Promise 任务
  *
  * @param {Array} list
+ * @return {Promise}
  */
 function parallel(list) {
   return new Promise((resolve, reject) => {

@@ -188,4 +188,25 @@ describe('lei-coroutine', function () {
     });
   });
 
+  it('verify generator function', function () {
+    assert.throws(function () {
+      coroutine.wrap(function hello() {});
+    }, /not a generator function/);
+    assert.throws(function () {
+      coroutine.wrap();
+    }, /not a generator function/);
+    assert.throws(function () {
+      coroutine.wrap(null);
+    }, /not a generator function/);
+    assert.throws(function () {
+      coroutine.wrap('ok');
+    }, /not a generator function/);
+    assert.throws(function () {
+      coroutine.wrap(123);
+    }, /not a generator function/);
+    assert.throws(function () {
+      coroutine.wrap({});
+    }, /not a generator function/);
+  });
+
 });

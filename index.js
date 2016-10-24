@@ -6,6 +6,9 @@
  * @author Zongmin Lei <leizongmin@gmail.com>
  */
 
+// Generator 函数原型
+const GeneratorFunction = (function* () {}).constructor;
+
 /**
  * 检查是否为 Promise 对象
  *
@@ -14,6 +17,16 @@
  */
 function isPromise(p) {
   return typeof p.then === 'function' && typeof p.catch === 'function';
+}
+
+/**
+ * 检查是否为 Generator 函数
+ *
+ * @param {Function} genFn
+ * @return {Boolean}
+ */
+function isGeneratorFunction(genFn) {
+  return genFn instanceof GeneratorFunction;
 }
 
 /**
@@ -76,6 +89,9 @@ function genFnToPromise(genFn) {
  * @return {Function}
  */
 function wrap(genFn) {
+  if (!isGeneratorFunction(genFn)) {
+    throw new TypeError(`not a generator function`);
+  }
   // 包装 generator 函数
   const fn = genFnToPromise(genFn);
   // 保留函数名和参数信息

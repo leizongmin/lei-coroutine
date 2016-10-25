@@ -10,7 +10,7 @@
     "test": "npm run lint && mocha -t 5000",
     "coverage": "istanbul cover _mocha --report lcovonly -- -t 30000 -R spec && cat ./coverage/lcov.info | coveralls",
     "lint": "eslint lib test --fix",
-    "prepublish": "npm run test"
+    "prepublish": "npm run lint && npm run coverage"
   },
   "repository": {
     "type": "git",

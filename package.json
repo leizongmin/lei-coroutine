@@ -8,6 +8,7 @@
   ],
   "scripts": {
     "test": "npm run lint && mocha -t 5000",
+    "coverage": "istanbul cover _mocha --report lcovonly -- -t 30000 -R spec && cat ./coverage/lcov.info | coveralls",
     "lint": "eslint lib test --fix",
     "prepublish": "npm run test"
   },
@@ -27,9 +28,11 @@
   },
   "homepage": "https://github.com/leizongmin/lei-coroutine#readme",
   "devDependencies": {
+    "coveralls": "^2.11.14",
     "eslint": "^3.8.1",
     "eslint-config-lei": "0.0.14",
     "eslint-plugin-promise": "^3.3.0",
+    "istanbul": "^0.4.5",
     "mocha": "^3.1.2"
   }
 }

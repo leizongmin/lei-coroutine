@@ -37,7 +37,7 @@ $ npm install lei-coroutine --save
 ```javascript
 'use strict';
 
-const coroutine = require('lei-routine');
+const coroutine = require('lei-coroutine');
 
 // 包装 generator 函数
 const fn = coroutine.wrap(function* (a) {
@@ -65,7 +65,7 @@ coroutine(function* (a, b) {
 ```javascript
 'use strict';
 
-const coroutine = require('lei-routine');
+const coroutine = require('lei-coroutine');
 
 // 声明函数
 async function fn(a) {

@@ -80,6 +80,11 @@ coroutine(function* (a, b) {
     coroutine.delay(b),
   ]);
 }, 100, 120).then(ret => console.log(ret)).catch(err => console.error(err));
+
+// 执行回调函数
+coroutine.cb(null, function (a, b, callback) {
+  callback(null, a + b);
+}, 123, 456).then(ret => console.log(ret)).catch(err => console.error(err));
 ```
 
 ## 与 async function / await 的替换

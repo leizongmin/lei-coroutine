@@ -246,4 +246,50 @@ describe('lei-coroutine', function () {
     }, /not a generator function/);
   });
 
+  it('cb(this, `method`, a, b)', function () {
+    class Person {
+      constructor() {
+        this.time = Date.now();
+      }
+      getTime(a, b, callback) {
+        setImmediate(() => {
+          callback(null, `${ a }:${ b }:${ this.time }`);
+        });
+      }
+    }
+    const p = new Person();
+    return coroutine.cb(p, 'getTime', 123, 456).then(ret => {
+      console.log(ret);
+      assert.equal(ret, `123:456:${ p.time }`);
+    }).then(() => {
+      return coroutine.cb(p, p.getTime, 456, 789);
+    }).then(ret => {
+      console.log(ret);
+      assert.equal(ret, `456:789:${ p.time }`);
+    });
+  });
+
+  it('cb(null, `method`, a, b) - error', function () {
+    return coroutine.cb(null, 'getTime', 123, 456).then(ret => {
+      console.log(ret);
+      throw new Error(`must throws error`);
+    }).catch(err => {
+      console.log(err);
+      assert.equal(err.message, `handler must be a function, but got type "string"`);
+    });
+  });
+
+  it('cb(null, fn, a, b) - error', function () {
+    const time = Date.now();
+    function getTime(a, b, callback) {
+      setImmediate(() => {
+        callback(null, `${ a }:${ b }:${ time }`);
+      });
+    }
+    return coroutine.cb(null, getTime, 123, 456).then(ret => {
+      console.log(ret);
+      assert.equal(ret, `123:456:${ time }`);
+    });
+  });
+
 });

@@ -10,16 +10,6 @@
 const GeneratorFunction = (function* () {}).constructor;
 
 /**
- * 检查是否为 Promise 对象
- *
- * @param {Object} p
- * @return {Boolean}
- */
-function isPromise(p) {
-  return typeof p.then === 'function' && typeof p.catch === 'function';
-}
-
-/**
  * 检查是否为 Generator 函数
  *
  * @param {Function} genFn
@@ -161,8 +151,41 @@ function parallel(list) {
   });
 }
 
+/**
+ * 调用一个 callback 方式的函数，返回一个 Promise
+ *
+ * ```
+ * my.hello(1, 2, (err, ret) => console.log(err, ret))
+ * cb(my, 'hello', 1, 2).then(ret => console.log(ret)).catch(err => console.log(err))
+ * ```
+ *
+ * @param {Object} thisArg
+ * @param {Function|String} handler
+ * @return {Promise}
+ */
+function cb(thisArg, handler) {
+  return new Promise((resolve, reject) => {
+    const args = Array.prototype.slice.call(arguments, 2);
+    args.push((err, ret) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(ret);
+      }
+    });
+    if (typeof handler !== 'function') {
+      if (!thisArg) {
+        return reject(new Error(`handler must be a function, but got type "${ typeof handler }"`));
+      }
+      handler = thisArg[handler];
+    }
+    handler.apply(thisArg, args);
+  });
+}
+
 module.exports = exports = exec;
 exports.exec = exec;
 exports.wrap = wrap;
 exports.delay = delay;
 exports.parallel = parallel;
+exports.cb = cb;

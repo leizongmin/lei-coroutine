@@ -54,6 +54,9 @@ function getSourceLocation(offset) {
  * @return {Function}
  */
 function genFnToPromise(genFn) {
+  if (!isGeneratorFunction(genFn)) {
+    throw new TypeError(`not a generator function`);
+  }
   return function () {
     return new Promise((resolve, reject) => {
       const gen = genFn.apply(null, arguments);
@@ -85,9 +88,6 @@ function genFnToPromise(genFn) {
  * @return {Function}
  */
 function wrap(genFn) {
-  if (!isGeneratorFunction(genFn)) {
-    throw new TypeError(`not a generator function`);
-  }
   // 包装 generator 函数
   const fn = genFnToPromise(genFn);
   // 保留函数名和参数信息
@@ -112,7 +112,7 @@ function wrap(genFn) {
  * @return {Promise}
  */
 function exec(genFn) {
-  return wrap(genFn).apply(this, Array.prototype.slice.call(arguments, 1));
+  return genFnToPromise(genFn).apply(this, Array.prototype.slice.call(arguments, 1));
 }
 
 /**

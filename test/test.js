@@ -269,7 +269,7 @@ describe('lei-coroutine', function () {
     });
   });
 
-  it('cb(null, `method`, a, b) - error', function () {
+  it('cb(null, `method`, a, b) - throws error', function () {
     return coroutine.cb(null, 'getTime', 123, 456).then(ret => {
       console.log(ret);
       throw new Error(`must throws error`);
@@ -279,7 +279,7 @@ describe('lei-coroutine', function () {
     });
   });
 
-  it('cb(null, fn, a, b) - error', function () {
+  it('cb(null, fn, a, b)', function () {
     const time = Date.now();
     function getTime(a, b, callback) {
       setImmediate(() => {
@@ -289,6 +289,21 @@ describe('lei-coroutine', function () {
     return coroutine.cb(null, getTime, 123, 456).then(ret => {
       console.log(ret);
       assert.equal(ret, `123:456:${ time }`);
+    });
+  });
+
+  it('cb(null, fn, a, b) - callback error', function () {
+    const time = Date.now();
+    function getTime(a, b, callback) {
+      setImmediate(() => {
+        callback(new Error(`${ a }:${ b }:${ time }`));
+      });
+    }
+    return coroutine.cb(null, getTime, 123, 456).then(ret => {
+      throw new Error(`must callback error`);
+    }).catch(err => {
+      console.log(err);
+      assert.equal(err.message, `123:456:${ time }`);
     });
   });
 

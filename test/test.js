@@ -17,7 +17,7 @@ describe('lei-coroutine', function () {
       return `hello, ${ world }`;
     }
     const fn = coroutine.wrap(hello);
-    console.log(fn);
+    // console.log(fn);
     assert.equal(fn.__generatorFunction__, hello);
   });
 
@@ -26,7 +26,7 @@ describe('lei-coroutine', function () {
       yield world;
       return `hello, ${ world }`;
     });
-    console.log(fn);
+    // console.log(fn);
     assert.deepEqual(fn.__sourceLocation__, {
       file: __filename,
       line: 25,
@@ -41,7 +41,7 @@ describe('lei-coroutine', function () {
       return yield coroutine.delay(125);
     });
     return fn().then(ret => {
-      console.log(ret);
+      // console.log(ret);
       assert.equal(ret, 125);
     });
   });
@@ -51,7 +51,7 @@ describe('lei-coroutine', function () {
       yield coroutine.delay(111);
       return yield coroutine.delay(222);
     }).then(ret => {
-      console.log(ret);
+      // console.log(ret);
       assert.equal(ret, 222);
     });
   });
@@ -62,7 +62,7 @@ describe('lei-coroutine', function () {
       const d = yield coroutine.delay(b);
       return [ c, d ];
     }, 123, 321).then(ret => {
-      console.log(ret);
+      // console.log(ret);
       assert.deepEqual(ret, [ 123, 321 ]);
     });
   });
@@ -75,7 +75,7 @@ describe('lei-coroutine', function () {
     }).then(ret => {
       throw new Error('must throws error');
     }).catch(err => {
-      console.log(err);
+      // console.log(err);
       assert.equal(err.message, 'test');
     });
   });
@@ -93,7 +93,7 @@ describe('lei-coroutine', function () {
     }).then(ret => {
       throw new Error('must throws error');
     }).catch(err => {
-      console.log(err);
+      // console.log(err);
       assert.equal(err.message, 'test2');
     });
   });
@@ -114,7 +114,7 @@ describe('lei-coroutine', function () {
     }).then(ret => {
       throw new Error('must throws error');
     }).catch(err => {
-      console.log(err);
+      // console.log(err);
       assert.equal(err.message, 'test2');
     });
   });
@@ -125,7 +125,7 @@ describe('lei-coroutine', function () {
       yield coroutine.delay(110);
       return yield 12345;
     }).then(ret => {
-      console.log(ret);
+      // console.log(ret);
       assert.equal(ret, 12345);
     });
   });
@@ -156,26 +156,26 @@ describe('lei-coroutine', function () {
     }
     {
       const fn = coroutine.wrap(function* () {});
-      console.log(fn.toString());
+      // console.log(fn.toString());
       assert.equal(fn.length, 0);
       assert.equal(firstLine(fn.toString()), 'function () {');
     }
     {
       // eslint-disable-next-line
       const fn = coroutine.wrap(function* ( a, b ) {});
-      console.log(fn.toString());
+      // console.log(fn.toString());
       assert.equal(fn.length, 2);
       assert.equal(firstLine(fn.toString()), 'function ( a, b ) {');
     }
     {
       const fn = coroutine.wrap(function* haha() {});
-      console.log(fn.toString());
+      // console.log(fn.toString());
       assert.equal(fn.length, 0);
       assert.equal(firstLine(fn.toString()), 'function haha() {');
     }
     {
       const fn = coroutine.wrap(function* haha(a, b, c) {});
-      console.log(fn.toString());
+      // console.log(fn.toString());
       assert.equal(fn.length, 3);
       assert.equal(firstLine(fn.toString()), 'function haha(a, b, c) {');
     }
@@ -259,22 +259,22 @@ describe('lei-coroutine', function () {
     }
     const p = new Person();
     return coroutine.cb(p, 'getTime', 123, 456).then(ret => {
-      console.log(ret);
+      // console.log(ret);
       assert.equal(ret, `123:456:${ p.time }`);
     }).then(() => {
       return coroutine.cb(p, p.getTime, 456, 789);
     }).then(ret => {
-      console.log(ret);
+      // console.log(ret);
       assert.equal(ret, `456:789:${ p.time }`);
     });
   });
 
   it('cb(null, `method`, a, b) - throws error', function () {
     return coroutine.cb(null, 'getTime', 123, 456).then(ret => {
-      console.log(ret);
+      // console.log(ret);
       throw new Error(`must throws error`);
     }).catch(err => {
-      console.log(err);
+      // console.log(err);
       assert.equal(err.message, `handler must be a function, but got type "string"`);
     });
   });
@@ -287,7 +287,7 @@ describe('lei-coroutine', function () {
       });
     }
     return coroutine.cb(null, getTime, 123, 456).then(ret => {
-      console.log(ret);
+      // console.log(ret);
       assert.equal(ret, `123:456:${ time }`);
     });
   });
@@ -302,7 +302,7 @@ describe('lei-coroutine', function () {
     return coroutine.cb(null, getTime, 123, 456).then(ret => {
       throw new Error(`must callback error`);
     }).catch(err => {
-      console.log(err);
+      // console.log(err);
       assert.equal(err.message, `123:456:${ time }`);
     });
   });

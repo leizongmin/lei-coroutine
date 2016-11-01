@@ -91,7 +91,12 @@ function wrap(genFn) {
   // 包装 generator 函数
   const fn = genFnToPromise(genFn);
   // 保留函数名和参数信息
-  const info = genFn.toString().match(/function\s*\*\s*(.*\(.*\))/);
+  let info;
+  if (genFn.length > 0) {
+    info = genFn.toString().match(/\*((.*?)\(\s*([^)]+?)\s*\))/);
+  } else {
+    info = genFn.toString().match(/\*((.*?)\(\s*(\s*)\s*\))/);
+  }
   const sign = info && info[1] ? info[1] : '()';
   const code =
 `(function ${ sign } {

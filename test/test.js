@@ -307,4 +307,13 @@ describe('lei-coroutine', function () {
     });
   });
 
+  it('cb(this, `method`, a, b) - method is not a function', function () {
+    return coroutine.cb(this, `OOXXXXOO`, 123, 456).then(ret => {
+      throw new Error(`must callback error`);
+    }).catch(err => {
+      // console.log(err);
+      assert.equal(err.message, `handler "OOXXXXOO" must be a function, but got type "string"`);
+    });
+  });
+
 });

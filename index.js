@@ -180,9 +180,13 @@ function cb(thisArg, handler) {
     });
     if (typeof handler !== 'function') {
       if (!thisArg) {
-        return reject(new Error(`handler must be a function, but got type "${ typeof handler }"`));
+        return reject(new TypeError(`handler must be a function, but got type "${ typeof handler }"`));
       }
-      handler = thisArg[handler];
+      const fn = thisArg[handler];
+      if (typeof fn !== 'function') {
+        return reject(new TypeError(`handler "${ handler }" must be a function, but got type "${ typeof handler }"`));
+      }
+      handler = fn;
     }
     handler.apply(thisArg, args);
   });

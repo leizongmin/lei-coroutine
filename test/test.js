@@ -7,6 +7,7 @@
  */
 
 const assert = require('assert');
+const bluebird = require('bluebird');
 const coroutine = require('../');
 
 describe('lei-coroutine', function () {
@@ -29,9 +30,9 @@ describe('lei-coroutine', function () {
     // console.log(fn);
     assert.deepEqual(fn.__sourceLocation__, {
       file: __filename,
-      line: 25,
+      line: 26,
       column: 26,
-      info: `${ __filename }:25:26`,
+      info: `${ __filename }:26:26`,
     });
   });
 
@@ -314,6 +315,20 @@ describe('lei-coroutine', function () {
       // console.log(err);
       assert.equal(err.message, `handler "OOXXXXOO" must be a function, but got type "string"`);
     });
+  });
+
+  it('custom Promise', function (done) {
+    const originPromise = coroutine.Promise;
+    coroutine.Promise = bluebird;
+    coroutine(function* () {
+      yield coroutine.delay(50);
+      return 12345;
+    }).asCallback((err, ret) => {
+      assert.equal(err, null);
+      assert.equal(ret, 12345);
+      done();
+    });
+    coroutine.Promise = originPromise;
   });
 
 });

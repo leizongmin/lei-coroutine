@@ -87,6 +87,18 @@ coroutine.cb(null, function (a, b, callback) {
 }, 123, 456).then(ret => console.log(ret)).catch(err => console.error(err));
 ```
 
+### 自定义 Promise
+
+如果想使用诸如`bluebird`这样的`Promise`库，可以通过设置`lei-coroutine`模块的`Promise`属性来完成：
+
+```javascript
+const coroutine = require('lei-coroutine');
+const bluebird = require('bluebird');
+
+coroutine.Promise = bluebird;
+```
+
+
 ## 与 async function / await 的替换
 
 ```javascript

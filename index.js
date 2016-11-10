@@ -58,7 +58,7 @@ function genFnToPromise(genFn) {
     throw new TypeError(`not a generator function`);
   }
   return function () {
-    return new Promise((resolve, reject) => {
+    return new exports.Promise((resolve, reject) => {
       const gen = genFn.apply(null, arguments);
       function step(key, value) {
         let ret;
@@ -127,7 +127,7 @@ function exec(genFn) {
  * @return {Promise}
  */
 function delay(ms) {
-  return new Promise((resolve, reject) => {
+  return new exports.Promise((resolve, reject) => {
     setTimeout(resolve, ms, ms);
   });
 }
@@ -139,7 +139,7 @@ function delay(ms) {
  * @return {Promise}
  */
 function parallel(list) {
-  return new Promise((resolve, reject) => {
+  return new exports.Promise((resolve, reject) => {
     const result = [];
     let finishCount = 0;
     list.forEach((p, i) => {
@@ -169,7 +169,7 @@ function parallel(list) {
  * @return {Promise}
  */
 function cb(thisArg, handler) {
-  return new Promise((resolve, reject) => {
+  return new exports.Promise((resolve, reject) => {
     const args = Array.prototype.slice.call(arguments, 2);
     args.push((err, ret) => {
       if (err) {
@@ -193,6 +193,7 @@ function cb(thisArg, handler) {
 }
 
 module.exports = exports = exec;
+exports.Promise = Promise;
 exports.exec = exec;
 exports.wrap = wrap;
 exports.delay = delay;

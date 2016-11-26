@@ -121,6 +121,24 @@ function exec(genFn) {
 }
 
 /**
+ * 执行 coroutine 函数
+ *
+ * @param {Function} genFn
+ * @param {Mixed} param1
+ * @param {Mixed} param2
+ * @param {Function} callback
+ * @return {Promise}
+ */
+function execAsCallback(genFn) {
+  const args = Array.prototype.slice.call(arguments, 1);
+  const callback = args.pop();
+  if (typeof callback !== 'function') {
+    throw new TypeError(`the last argument must be a callback function`);
+  }
+  return genFnToPromise(genFn).apply(this, args).then(ret => callback(null, ret)).catch(callback);
+}
+
+/**
  * 暂停
  *
  * @param {Number} ms
@@ -195,6 +213,7 @@ function cb(thisArg, handler) {
 module.exports = exports = exec;
 exports.Promise = Promise;
 exports.exec = exec;
+exports.asCallback = execAsCallback;
 exports.wrap = wrap;
 exports.delay = delay;
 exports.parallel = parallel;

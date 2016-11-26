@@ -151,6 +151,41 @@ describe('lei-coroutine', function () {
     });
   });
 
+  it('asCallback', function (done) {
+    coroutine.asCallback(function* () {
+      yield coroutine.delay(111);
+      return yield coroutine.delay(222);
+    }, (err, ret) => {
+      if (err) return done(err);
+      assert.equal(ret, 222);
+      done();
+    });
+  });
+
+  it('asCallback - with args', function (done) {
+    coroutine.asCallback(function* (a, b) {
+      const c = yield coroutine.delay(a);
+      const d = yield coroutine.delay(b);
+      return [ c, d ];
+    }, 123, 321, (err, ret) => {
+      if (err) return done(err);
+      assert.deepEqual(ret, [ 123, 321 ]);
+      done();
+    });
+  });
+
+  it('asCallback - error', function (done) {
+    coroutine.asCallback(function* () {
+      yield coroutine.delay(111);
+      yield coroutine.delay(110);
+      throw new Error('test');
+    }, (err, ret) => {
+      if (!err) return done(new Error('must throws error'));
+      assert.equal(err.message, 'test');
+      done();
+    });
+  });
+
   it('wrap - keep parameters info', function () {
     function firstLine(str) {
       return str.split('\n')[0];

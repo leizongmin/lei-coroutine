@@ -31,6 +31,7 @@
   "homepage": "https://github.com/leizongmin/lei-coroutine#readme",
   "devDependencies": {
     "bluebird": "^3.4.6",
+    "chai": "^3.5.0",
     "coveralls": "^2.11.14",
     "eslint": "^3.8.1",
     "eslint-config-lei": "0.0.16",

@@ -6,7 +6,7 @@
  * @author Zongmin Lei <leizongmin@gmail.com>
  */
 
-const assert = require('assert');
+const expect = require('chai').expect;
 const bluebird = require('bluebird');
 const coroutine = require('../');
 
@@ -19,7 +19,7 @@ describe('lei-coroutine', function () {
     }
     const fn = coroutine.wrap(hello);
     // console.log(fn);
-    assert.equal(fn.__generatorFunction__, hello);
+    expect(fn.__generatorFunction__).to.equal(hello);
   });
 
   it('wrap - __sourceLocation__', function () {
@@ -28,7 +28,7 @@ describe('lei-coroutine', function () {
       return `hello, ${ world }`;
     });
     // console.log(fn);
-    assert.deepEqual(fn.__sourceLocation__, {
+    expect(fn.__sourceLocation__).to.deep.equal({
       file: __filename,
       line: 26,
       column: 26,
@@ -43,7 +43,7 @@ describe('lei-coroutine', function () {
     });
     return fn().then(ret => {
       // console.log(ret);
-      assert.equal(ret, 125);
+      expect(ret).to.equal(125);
     });
   });
 
@@ -53,7 +53,7 @@ describe('lei-coroutine', function () {
       return yield coroutine.delay(222);
     }).then(ret => {
       // console.log(ret);
-      assert.equal(ret, 222);
+      expect(ret).to.equal(222);
     });
   });
 
@@ -64,7 +64,7 @@ describe('lei-coroutine', function () {
       return [ c, d ];
     }, 123, 321).then(ret => {
       // console.log(ret);
-      assert.deepEqual(ret, [ 123, 321 ]);
+      expect(ret).to.deep.equal([ 123, 321 ]);
     });
   });
 
@@ -77,7 +77,7 @@ describe('lei-coroutine', function () {
       throw new Error('must throws error');
     }).catch(err => {
       // console.log(err);
-      assert.equal(err.message, 'test');
+      expect(err.message).to.equal('test');
     });
   });
 
@@ -88,14 +88,14 @@ describe('lei-coroutine', function () {
         yield coroutine.delay(110);
         throw new Error('test');
       } catch (err) {
-        assert.equal(err.message, 'test');
+        expect(err.message).to.equal('test');
         throw new Error('test2');
       }
     }).then(ret => {
       throw new Error('must throws error');
     }).catch(err => {
       // console.log(err);
-      assert.equal(err.message, 'test2');
+      expect(err.message).to.equal('test2');
     });
   });
 
@@ -109,14 +109,14 @@ describe('lei-coroutine', function () {
         yield throwsError('test3');
         throw new Error('test');
       } catch (err) {
-        assert.equal(err.message, 'test3');
+        expect(err.message).to.equal('test3');
         throw new Error('test2');
       }
     }).then(ret => {
       throw new Error('must throws error');
     }).catch(err => {
       // console.log(err);
-      assert.equal(err.message, 'test2');
+      expect(err.message).to.equal('test2');
     });
   });
 
@@ -127,7 +127,7 @@ describe('lei-coroutine', function () {
       return yield 12345;
     }).then(ret => {
       // console.log(ret);
-      assert.equal(ret, 12345);
+      expect(ret).to.equal(12345);
     });
   });
 
@@ -147,7 +147,7 @@ describe('lei-coroutine', function () {
       const ret2 = yield test2(c, d);
       return [ ret1, ret2 ];
     }, 1, 2, 3, 4).then(ret => {
-      assert.deepEqual(ret, [[ 1, 2 ], [ 4, 3 ]]);
+      expect(ret).to.deep.equal([[ 1, 2 ], [ 4, 3 ]]);
     });
   });
 
@@ -157,7 +157,7 @@ describe('lei-coroutine', function () {
       return yield coroutine.delay(222);
     }, (err, ret) => {
       if (err) return done(err);
-      assert.equal(ret, 222);
+      expect(ret).to.equal(222);
       done();
     });
   });
@@ -169,7 +169,7 @@ describe('lei-coroutine', function () {
       return [ c, d ];
     }, 123, 321, (err, ret) => {
       if (err) return done(err);
-      assert.deepEqual(ret, [ 123, 321 ]);
+      expect(ret).to.deep.equal([ 123, 321 ]);
       done();
     });
   });
@@ -181,7 +181,7 @@ describe('lei-coroutine', function () {
       throw new Error('test');
     }, (err, ret) => {
       if (!err) return done(new Error('must throws error'));
-      assert.equal(err.message, 'test');
+      expect(err.message).to.equal('test');
       done();
     });
   });
@@ -193,27 +193,27 @@ describe('lei-coroutine', function () {
     {
       const fn = coroutine.wrap(function* () {});
       // console.log(fn.toString());
-      assert.equal(fn.length, 0);
-      assert.equal(firstLine(fn.toString()), 'function () {');
+      expect(fn.length).to.equal(0);
+      expect(firstLine(fn.toString())).to.equal('function () {');
     }
     {
       // eslint-disable-next-line
       const fn = coroutine.wrap(function* ( a, b ) {});
       // console.log(fn.toString());
-      assert.equal(fn.length, 2);
-      assert.equal(firstLine(fn.toString()), 'function ( a, b ) {');
+      expect(fn.length).to.equal(2);
+      expect(firstLine(fn.toString())).to.equal('function ( a, b ) {');
     }
     {
       const fn = coroutine.wrap(function* haha() {});
       // console.log(fn.toString());
-      assert.equal(fn.length, 0);
-      assert.equal(firstLine(fn.toString()), 'function haha() {');
+      expect(fn.length).to.equal(0);
+      expect(firstLine(fn.toString())).to.equal('function haha() {');
     }
     {
       const fn = coroutine.wrap(function* haha(a, b, c) {});
       // console.log(fn.toString());
-      assert.equal(fn.length, 3);
-      assert.equal(firstLine(fn.toString()), 'function haha(a, b, c) {');
+      expect(fn.length).to.equal(3);
+      expect(firstLine(fn.toString())).to.equal('function haha(a, b, c) {');
     }
   });
 
@@ -234,7 +234,7 @@ describe('lei-coroutine', function () {
         test2(c, d),
       ]);
     }, 1, 2, 3, 4).then(ret => {
-      assert.deepEqual(ret, [[ 1, 2 ], [ 4, 3 ]]);
+      expect(ret).to.deep.equal([[ 1, 2 ], [ 4, 3 ]]);
     });
   });
 
@@ -257,29 +257,29 @@ describe('lei-coroutine', function () {
     }, 1, 2, 3, 4).then(ret => {
       throw new Error('must throws error');
     }).catch(err => {
-      assert.equal(err.message, 'test1');
+      expect(err.message).to.equal('test1');
     });
   });
 
   it('verify generator function', function () {
-    assert.throws(function () {
+    expect(function () {
       coroutine.wrap(function hello() {});
-    }, /not a generator function/);
-    assert.throws(function () {
+    }).to.throw(/not a generator function/);
+    expect(function () {
       coroutine.wrap();
-    }, /not a generator function/);
-    assert.throws(function () {
+    }).to.throw(/not a generator function/);
+    expect(function () {
       coroutine.wrap(null);
-    }, /not a generator function/);
-    assert.throws(function () {
+    }).to.throw(/not a generator function/);
+    expect(function () {
       coroutine.wrap('ok');
-    }, /not a generator function/);
-    assert.throws(function () {
+    }).to.throw(/not a generator function/);
+    expect(function () {
       coroutine.wrap(123);
-    }, /not a generator function/);
-    assert.throws(function () {
+    }).to.throw(/not a generator function/);
+    expect(function () {
       coroutine.wrap({});
-    }, /not a generator function/);
+    }).to.throw(/not a generator function/);
   });
 
   it('cb(this, `method`, a, b)', function () {
@@ -296,12 +296,12 @@ describe('lei-coroutine', function () {
     const p = new Person();
     return coroutine.cb(p, 'getTime', 123, 456).then(ret => {
       // console.log(ret);
-      assert.equal(ret, `123:456:${ p.time }`);
+      expect(ret).to.equal(`123:456:${ p.time }`);
     }).then(() => {
       return coroutine.cb(p, p.getTime, 456, 789);
     }).then(ret => {
       // console.log(ret);
-      assert.equal(ret, `456:789:${ p.time }`);
+      expect(ret).to.equal(`456:789:${ p.time }`);
     });
   });
 
@@ -311,7 +311,7 @@ describe('lei-coroutine', function () {
       throw new Error(`must throws error`);
     }).catch(err => {
       // console.log(err);
-      assert.equal(err.message, `handler must be a function, but got type "string"`);
+      expect(err.message).to.equal(`handler must be a function, but got type "string"`);
     });
   });
 
@@ -324,7 +324,7 @@ describe('lei-coroutine', function () {
     }
     return coroutine.cb(null, getTime, 123, 456).then(ret => {
       // console.log(ret);
-      assert.equal(ret, `123:456:${ time }`);
+      expect(ret).to.equal(`123:456:${ time }`);
     });
   });
 
@@ -339,7 +339,7 @@ describe('lei-coroutine', function () {
       throw new Error(`must callback error`);
     }).catch(err => {
       // console.log(err);
-      assert.equal(err.message, `123:456:${ time }`);
+      expect(err.message).to.equal(`123:456:${ time }`);
     });
   });
 
@@ -348,7 +348,7 @@ describe('lei-coroutine', function () {
       throw new Error(`must callback error`);
     }).catch(err => {
       // console.log(err);
-      assert.equal(err.message, `handler "OOXXXXOO" must be a function, but got type "string"`);
+      expect(err.message).to.equal(`handler "OOXXXXOO" must be a function, but got type "string"`);
     });
   });
 
@@ -359,8 +359,8 @@ describe('lei-coroutine', function () {
       yield coroutine.delay(50);
       return 12345;
     }).asCallback((err, ret) => {
-      assert.equal(err, null);
-      assert.equal(ret, 12345);
+      expect(err).to.be.null;
+      expect(ret).to.equal(12345);
       done();
     });
     coroutine.Promise = originPromise;

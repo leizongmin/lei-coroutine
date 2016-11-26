@@ -184,6 +184,8 @@ function parallel(list) {
  *
  * @param {Object} thisArg
  * @param {Function|String} handler
+ * @param {Mixed} param1
+ * @param {Mixed} param2
  * @return {Promise}
  */
 function cb(thisArg, handler) {

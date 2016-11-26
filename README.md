@@ -85,6 +85,17 @@ coroutine(function* (a, b) {
 coroutine.cb(null, function (a, b, callback) {
   callback(null, a + b);
 }, 123, 456).then(ret => console.log(ret)).catch(err => console.error(err));
+
+// 为了兼容 callback 方式，执行 generator 函数后可以 callback 方式回调
+coroutine.asCallback(function* (a) {
+  yield coroutine.delay(a);
+}, 100, (err, ret) => {
+  if (err) {
+    console.error(err);
+  } else {
+    console.log(ret);
+  }
+});
 ```
 
 ### 自定义 Promise

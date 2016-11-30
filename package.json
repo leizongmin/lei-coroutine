@@ -1,11 +1,13 @@
 {
   "name": "lei-coroutine",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "Simple coroutine library, can keep function name and parameters information",
   "main": "index.js",
   "files": [
-    "index.js"
+    "index.js",
+    "index.d.ts"
   ],
+  "types": "index.d.ts",
   "scripts": {
     "test": "npm run lint && mocha -t 5000",
     "test-cov": "istanbul cover _mocha --report lcovonly -- -t 30000 -R spec && cat ./coverage/lcov.info | coveralls",

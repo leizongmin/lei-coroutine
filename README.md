@@ -21,7 +21,7 @@
 [license-image]: https://img.shields.io/npm/l/lei-coroutine.svg
 
 # lei-coroutine
-简单的 coroutine 库
+简单的 coroutine 库，支持 TypeScript
 
 ## 为什么要造这个轮子
 

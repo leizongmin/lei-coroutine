@@ -20,10 +20,25 @@ declare namespace Coroutine {
      */
     (...params: any[]): Promise<any>;
     readonly __generatorFunction__: IGeneratorFunction;
+    /**
+     * 源函数位置信息
+     */
     readonly __sourceLocation__: {
+      /**
+       * 文件名
+       */
       readonly file: string;
+      /**
+       * 行
+       */
       readonly line: number;
-      columnreadonly : number;
+      /**
+       * 列
+       */
+      readonly column : number;
+      /**
+       * 位置信息
+       */
       readonly info: string;
     };
   }
@@ -65,6 +80,9 @@ declare namespace Coroutine {
      * 之间执行生成器函数，并执行回调函数
      */
     (genFn: IGeneratorFunction, callback: ICallbackFunction): void;
+    /**
+     * 之间执行生成器函数，并执行回调函数
+     */
     (genFn: IGeneratorFunction, ...params: any[]): void;
   }
 
@@ -88,11 +106,29 @@ declare namespace Coroutine {
      */
     (genFn: IGeneratorFunction): IWrappedFunction;
     Promise: PromiseConstructorLike;
+    /**
+     * 直接执行生成器函数，返回Promise
+     */
     readonly exec: IExec;
+    /**
+     * 之间执行生成器函数，并执行回调函数
+     */
     readonly asCallback: IExecAsCallback;
+    /**
+     * 包装函数
+     */
     readonly wrap: IWrap;
+    /**
+     * 延时
+     */
     readonly delay: IDelay;
+    /**
+     * 并行执行多个Promise
+     */
     readonly parallel: IParallel;
+    /**
+     * 执行回调函数
+     */
     readonly cb: ICallback;
   }
 

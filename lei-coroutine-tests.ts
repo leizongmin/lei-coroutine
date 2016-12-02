@@ -24,3 +24,13 @@ coroutine.asCallback(function* () {
 
 coroutine.cb(null, "123").then(ret => console.log(ret));
 coroutine.cb(this, function () {}, 1, 2, "aaa").catch(err => console.log(err));
+
+const fn = coroutine.wrap(function* () {
+  yield 123;
+});
+fn.__generatorFunction__;
+fn.__sourceLocation__.column;
+fn.__sourceLocation__.file;
+fn.__sourceLocation__.info;
+fn.__sourceLocation__.line;
+fn(1, 2, 3).catch(err => console.log(err));

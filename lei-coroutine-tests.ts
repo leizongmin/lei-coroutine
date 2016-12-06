@@ -4,6 +4,12 @@ coroutine(function* () {
   yield 123;
 });
 
+coroutine(function* () {
+  yield 123;
+}).catch((err: Error) => {
+  console.log(err);
+});
+
 coroutine.exec(function* () {
   yield 123;
 });

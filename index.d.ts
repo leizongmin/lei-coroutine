@@ -104,7 +104,7 @@ declare namespace Coroutine {
     /**
      * 直接执行生成器函数，返回Promise
      */
-    (genFn: IGeneratorFunction): IWrappedFunction;
+    (genFn: IGeneratorFunction): Promise<any>;
     Promise: PromiseConstructorLike;
     /**
      * 直接执行生成器函数，返回Promise

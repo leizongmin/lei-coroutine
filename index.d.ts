@@ -1,139 +1,108 @@
-declare namespace Coroutine {
+/**
+ * lei-coroutine
+ *
+ * @author Zongmin Lei <leizongmin@gmail.com>
+ */
 
-  interface IFunction extends Function {
+interface NormalFunction extends Function {
+  /**
+   * 函数
+   */
+  (...params: any[]): any;
+}
+
+interface GeneratorFunction extends Function {
+  /**
+   * 生成器函数
+   */
+  (...params: any[]): IterableIterator<any>;
+}
+
+interface WrappedFunction<T> extends Function {
+  /**
+   * 包装后的函数
+   */
+  (...params: any[]): Promise<T>;
+  readonly __generatorFunction__: GeneratorFunction;
+  /**
+   * 源函数位置信息
+   */
+  readonly __sourceLocation__: {
     /**
-     * 函数
+     * 文件名
      */
-    (...params: any[]): any;
+    readonly file: string;
+    /**
+     * 行
+     */
+    readonly line: number;
+    /**
+     * 列
+     */
+    readonly column : number;
+    /**
+     * 位置信息
+     */
+    readonly info: string;
+  };
+}
+
+interface CallbackFunction<T> extends Function {
+  /**
+   * 回调函数
+   */
+  (err: Error | null | undefined, ret?: T): void;
+}
+
+interface Coroutine {
+
+  /**
+   * 直接执行生成器函数，返回Promise
+   */
+  <T>(genFn: GeneratorFunction): Promise<T>;
+
+  /**
+   * 自定义 Promise 对象
+   */
+  Promise: PromiseConstructorLike;
+
+  /**
+   * 直接执行生成器函数，返回Promise
+   */
+  exec<T>(genFn: GeneratorFunction, ...params: any[]): Promise<T>;
+
+  asCallback: {
+    /**
+     * 直接执行生成器函数，并执行回调函数
+     */
+    <T>(genFn: GeneratorFunction, callback: CallbackFunction<T>): void;
+    /**
+     * 直接执行生成器函数，并执行回调函数
+     */
+    (genFn: GeneratorFunction, ...params: any[]): void;
   }
 
-  interface IGeneratorFunction extends Function {
-    /**
-     * 生成器函数
-     */
-    (...params: any[]): IterableIterator<any>;
-  }
+  /**
+   * 执行回调函数
+   */
+  cb<T>(thisArg: any, handler: NormalFunction | string, ...args: any[]): Promise<T>;
 
-  interface IWrappedFunction extends Function {
-    /**
-     * 包装后的函数
-     */
-    (...params: any[]): Promise<any>;
-    readonly __generatorFunction__: IGeneratorFunction;
-    /**
-     * 源函数位置信息
-     */
-    readonly __sourceLocation__: {
-      /**
-       * 文件名
-       */
-      readonly file: string;
-      /**
-       * 行
-       */
-      readonly line: number;
-      /**
-       * 列
-       */
-      readonly column : number;
-      /**
-       * 位置信息
-       */
-      readonly info: string;
-    };
-  }
+  /**
+   * 包装函数
+   */
+  wrap<T>(genFn: GeneratorFunction): WrappedFunction<T>;
 
-  interface ICallbackFunction extends Function {
-    /**
-     * 回调函数
-     */
-    (err: Error | null | undefined, ret?: any): void;
-  }
+  /**
+   * 延时
+   */
+  delay(ms: number): Promise<number>;
 
-  interface ICallback {
-    /**
-     * 执行回调函数
-     */
-    (thisArg: null | undefined, handler: IFunction, ...args: any[]): Promise<any>;
-    /**
-     * 执行回调函数
-     */
-    (thisArg: {}, handler: string | IFunction, ...args: any[]): Promise<any>;
-  }
-
-  interface IWrap {
-    /**
-     * 包装函数
-     */
-    (genFn: IGeneratorFunction): IWrappedFunction;
-  }
-
-  interface IExec {
-    /**
-     * 直接执行生成器函数，返回Promise
-     */
-    (genFn: IGeneratorFunction, ...params: any[]): Promise<any>
-  }
-
-  interface IExecAsCallback {
-    /**
-     * 之间执行生成器函数，并执行回调函数
-     */
-    (genFn: IGeneratorFunction, callback: ICallbackFunction): void;
-    /**
-     * 之间执行生成器函数，并执行回调函数
-     */
-    (genFn: IGeneratorFunction, ...params: any[]): void;
-  }
-
-  interface IDelay {
-    /**
-     * 延时
-     */
-    (ms: number): Promise<number>;
-  }
-
-  interface IParallel {
-    /**
-     * 并行执行多个Promise
-     */
-    (list: Promise<any>[]): Promise<any[]>;
-  }
-
-  interface C {
-    /**
-     * 直接执行生成器函数，返回Promise
-     */
-    (genFn: IGeneratorFunction): Promise<any>;
-    Promise: PromiseConstructorLike;
-    /**
-     * 直接执行生成器函数，返回Promise
-     */
-    readonly exec: IExec;
-    /**
-     * 之间执行生成器函数，并执行回调函数
-     */
-    readonly asCallback: IExecAsCallback;
-    /**
-     * 包装函数
-     */
-    readonly wrap: IWrap;
-    /**
-     * 延时
-     */
-    readonly delay: IDelay;
-    /**
-     * 并行执行多个Promise
-     */
-    readonly parallel: IParallel;
-    /**
-     * 执行回调函数
-     */
-    readonly cb: ICallback;
-  }
+  /**
+   * 并行执行多个Promise
+   */
+  parallel(list: Promise<any>[]): Promise<any[]>;
 
 }
 
-declare const c: Coroutine.C;
-
-export = c;
+declare const coroutine: Coroutine;
+export = coroutine;

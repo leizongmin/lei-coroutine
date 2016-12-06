@@ -1,14 +1,19 @@
 import coroutine = require('./');
 
-coroutine(function* () {
+coroutine<void>(function* () {
   yield 123;
 });
 
-coroutine(function* () {
+coroutine<number>(function* () {
   yield 123;
-}).catch((err: Error) => {
-  console.log(err);
-});
+  return 456;
+})
+  .then((ret) => {
+    console.log(ret.toFixed(2));
+  })
+  .catch((err: Error) => {
+    console.log(err);
+  });
 
 coroutine.exec(function* () {
   yield 123;
@@ -40,3 +45,10 @@ fn.__sourceLocation__.file;
 fn.__sourceLocation__.info;
 fn.__sourceLocation__.line;
 fn(1, 2, 3).catch(err => console.log(err));
+
+const wrapped = coroutine.wrap<string>(function* (a: number, b: number) {
+  return yield "aaa";
+});
+wrapped(123, 456).then(ret => {
+  console.log(ret.toUpperCase());
+});

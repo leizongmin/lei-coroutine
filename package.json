@@ -39,6 +39,6 @@
     "eslint-config-lei": "0.0.16",
     "eslint-plugin-promise": "^3.3.0",
     "istanbul": "^0.4.5",
-    "mocha": "^3.1.2"
+    "mocha": "^3.4.0"
   }
 }

@@ -21,6 +21,8 @@
 [license-image]: https://img.shields.io/npm/l/lei-coroutine.svg
 
 # lei-coroutine
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/leizongmin/lei-coroutine.svg)](https://greenkeeper.io/)
 简单的 coroutine 库，支持 TypeScript
 
 ## 为什么要造这个轮子
